@@ -230,24 +230,26 @@ export default function Auth({ onClose, onSuccess }) {
   };
 
   const handleRegister = async () => {
-    setLoading(true);
-    setError("");
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      setError(error.message);
-    } else {
-      // Save profile
-      await supabase.from("profiles").insert({
-        user_id: data.user.id,
+  setLoading(true);
+  setError("");
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
         full_name: fullName,
-        email: email,
         role: role,
-      });
-      setSuccess(t('auth_created'));
-      setMode("login");
+      }
     }
-    setLoading(false);
-  };
+  });
+  if (error) {
+    setError(error.message);
+  } else {
+    setSuccess(t('auth_created'));
+    setMode("login");
+  }
+  setLoading(false);
+};
 
   return (
     <>
