@@ -430,6 +430,7 @@ const dashTours = [
 
 function LandingPage({ onSwitch, toggleLang, onLogin, user, onLogout }) {
   const { t, i18n } = useTranslation();
+	const [showUserMenu, setShowUserMenu] = useState(false);	
 
   return (
     <div>
@@ -442,9 +443,32 @@ function LandingPage({ onSwitch, toggleLang, onLogin, user, onLogout }) {
 	<button className="btn-lang" onClick={toggleLang}>
 	 {i18n.language === 'it' ? 'EN' : 'IT'}
 	</button>          
-	<button className="btn-primary" onClick={user ? () => { supabase.auth.signOut(); 	onLogout(); } : onLogin}>
-  	{user ? `👤 ${user.email.split('@')[0]}` : t('nav_login')}
-	</button>
+	<div style={{ position: "relative" }}>
+  <button className="btn-primary" onClick={() => user ? setShowUserMenu(!showUserMenu) : onLogin()}>
+    {user ? `👤 ${user.email.split('@')[0]}` : t('nav_login')}
+  </button>
+  {showUserMenu && user && (
+    <div style={{
+      position: "absolute", top: "110%", right: 0,
+      background: "white", borderRadius: 12, padding: 8,
+      boxShadow: "0 8px 32px rgba(0,61,92,0.15)",
+      border: "1px solid rgba(0,105,148,0.1)",
+      minWidth: 160, zIndex: 200
+    }}>
+      <div style={{ padding: "8px 16px", fontSize: "0.85rem", color: "#7A9BAD", borderBottom: "1px solid rgba(0,105,148,0.08)" }}>
+        {user.email}
+      </div>
+      <div style={{ padding: "10px 16px", fontSize: "0.9rem", cursor: "pointer", color: "#1A2E3B", borderRadius: 8 }}
+        onClick={() => { setShowUserMenu(false); }}>
+        👤 Profilo
+      </div>
+      <div style={{ padding: "10px 16px", fontSize: "0.9rem", cursor: "pointer", color: "#FF6B4A", borderRadius: 8 }}
+        onClick={() => { supabase.auth.signOut(); onLogout(); setShowUserMenu(false); }}>
+        🚪 Logout
+      </div>
+    </div>
+  )}
+</div>
         </div>
       </nav>
 
